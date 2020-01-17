@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:h="http://xmlns.jcp.org/jsf/html"
+             xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+             template="../../template.xhtml"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <div class="container-fluid">
+        <h3 class="mt-5 mb-3">Transferência de material</h3>
+        
+        <h:form class="justify-content-center">
+            <h:panelGrid columns="3" cellpadding="5">
+            <p:outputLabel for="n_pat" value="N Patrimonio" />
+            <p:inputText id="n_pat" type="number" value="#{materialBean.patrimonio.cod_patrimonio}"/>
+            <p:commandButton value="Buscar" icon="ui-icon-search" action="#{materialBean.materialByPatrimonio}" update=":dataTable"/>
+            </h:panelGrid>
+        </h:form>
+        <h:form id="dataTable">
+            <p:growl id="growl" showDetail="true" sticky="true" />
+            <p:dataTable var="mat" value="#{materialBean.listMaterial}" rows="10"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15">
+
+                
+
+                <p:column headerText="Patrimonio" sortBy="#{mat[0]}" filterBy="#{mat[0]}" style="width: 10%">
+                    <h:outputText value="#{mat[0]}" />
+                </p:column>
+
+                <p:column headerText="Material" sortBy="#{mat[1]}" filterBy="#{mat[1]}" style="width: 15%">
+                    <h:outputText value="#{mat[1]}" />
+                </p:column>
+
+                <p:column headerText="Aquisição" sortBy="#{mat[4]}" filterBy="#{mat[4]}}" filterMatchMode="contains" style="width: 10%">
+                    <h:outputText value="#{mat[4]}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Vlr Compra" sortBy="#{mat[3]}" filterBy="#{mat[3]}" style="width: 11%">
+                    <h:outputText value="#{mat[3]}" >
+                        <f:convertNumber pattern="R$ 0.00" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Vlr Atual" sortBy="#{mat[2].valor_atual}" filterBy="#{mat[2].valor_atual}" style="width: 11%">
+                    <h:outputText value="#{mat[2]}" >
+                        <f:convertNumber pattern="R$ 0.00" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Unidade" sortBy="#{mat[5]}" filterBy="#{mat[5]}" style="width: 11%">
+                    <h:outputText value="#{mat[5]}" />
+                </p:column> 
+
+                <p:column headerText="Depto" sortBy="#{mat[6]}" filterBy="#{mat[6]}" style="width: 11%">
+                    <h:outputText value="#{mat[6]}" />
+                </p:column>    
+
+                <p:column headerText="Ações" style="width: 13%;">
+
+                    
+                    <p:commandButton icon="ui-icon-arrowreturnthick-1-e"  title="Transferir" action="#{transferenciaBean.pegaMaterialParaTransferencia(mat[7])}" update=":formTransf" onclick="PF('transf').show();"/>
+                   
+                </p:column>
+
+                <f:facet name="paginatorTopLeft">
+                    <p:commandButton type="button" icon="pi pi-refresh" />
+                </f:facet>
+
+                <f:facet name="paginatorBottomRight">
+                    <p:commandButton type="button" icon="pi pi-cloud-upload" />
+                </f:facet>
+
+            </p:dataTable>
+        </h:form>
+        
+       
+    <p:dialog header="Transferir Material" widgetVar="transf" modal="true" >
+        <h:form id="formTransf">
+            
+            <div class="row justify-content-center m-5">
+                <h:panelGrid columns="2" cellpadding="5">
+
+                    <p:outputLabel id="material" value="Material: #{transferenciaBean.material.nome}" />
+
+
+                    <p:outputLabel id="data_aq" value="Data de aquisição: #{transferenciaBean.material.data_aquisicao}" />
+
+
+                    <p:outputLabel id="vlrCompra" value="Valor de compra: #{transferenciaBean.material.valor_compra}" />
+
+                    <p:outputLabel id="vlr_atual" value="Valor atual: #{transferenciaBean.material.valor_atual}" />
+
+
+                    <p:outputLabel id="codPat" value="Código de partimonio: #{transferenciaBean.material.patrimonio.cod_patrimonio}" />
+
+                    <div class="row">
+                        <p:outputLabel value="Unidade origem: #{transferenciaBean.transf.depto_origem.unidade.nome}" />
+                        
+                        <p:outputLabel value="Departamento origem: #{transferenciaBean.transf.depto_origem.nome}" />
+                        
+                        
+                        <p:outputLabel for="unidade" value="Unidade destino: " />
+                        <p:selectOneMenu id="unidade" value="#{departamentoBean.depto.unidade}" converter="unidadeConverter" style="width:160px" required="true" filter="true" filterMatchMode="startsWith">
+                            <f:selectItem noSelectionOption="true" itemLabel="Selecione uma unidade" />
+                            <f:selectItems value="#{unidadeBean.allListUnidade}" var="unidade" itemLabel="#{unidade.nome}" itemValue="#{unidade}"/>
+
+                        </p:selectOneMenu>
+                        <p:outputLabel for="depto_destino" value="Departamento destino: " />
+                        <p:selectOneMenu id="depto_destino" value="#{transferenciaBean.transf.depto_destino}" converter="departamentoConverter" style="width:210px" required="true" filter="true" filterMatchMode="startsWith">
+                            <f:selectItem noSelectionOption="true" itemLabel="Selecione um departamento" />
+                            <f:selectItems value="#{departamentoBean.allListDepto}" var="dp" itemLabel="#{dp.unidade.nome} - #{dp.nome}" itemValue="#{dp}"/>
+
+                        </p:selectOneMenu>
+                    </div>
+                </h:panelGrid>
+            </div>
+            <div class="row justify-content-center p-3">
+                <p:commandButton value="Salvar" action="#{transferenciaBean.efetuaTransferencia}" class="btn btn-outline-success" update=":dataTable" />
+            </div>
+        </h:form>
+    </p:dialog>
+    
+        </div>
+</ui:decorate>

@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:h="http://xmlns.jcp.org/jsf/html"
+             xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+             template="../../template.xhtml"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <div class="container"><h3 class="mb-5 mt-5">Colaboradores cadastrados</h3></div>
+
+        
+        <div class="container justify-content-center p-3">
+            
+                <h:form id="dataTable">
+                    <p:commandButton value="Cadastrar" icon="ui-icon-plus" type="button" update=":formCad" action="#{funcionarioBean.resetFuncionario}" onclick="PF('cadastrar').show();" />
+                    <p:dataTable var="func" value="#{funcionarioBean.allListFunc}" rows="10"
+                 paginator="true"
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                 rowsPerPageTemplate="5,10,15">
+                    
+                    <p:column headerText="Id" sortBy="#{func.id_funcionario}" filterBy="#{func.id_funcionario}" style="width:150px;">
+                        <h:outputText value="#{func.id_funcionario}" />
+                    </p:column>
+
+                    <p:column headerText="Nome funcionario" sortBy="#{func.nome}" filterBy="#{func.nome}">
+                        <h:outputText value="#{func.nome}" />
+                    </p:column>
+
+                    <p:column headerText="Email" sortBy="#{func.email}" filterBy="#{func.email}">
+                        <h:outputText value="#{func.email}" />
+                    </p:column>
+
+                    <p:column headerText="Unidade" sortBy="#{func.depto.nome}#{func.depto.unidade.nome}" filterBy="#{func.depto.nome}#{func.depto.unidade.nome}">
+                        <h:outputText value="#{func.depto.nome} - #{func.depto.unidade.nome}" />
+                    </p:column>
+                        
+                        <p:column headerText="Alterar" style="width:75px;">
+                          
+                            <p:commandButton icon="ui-icon-pencil" action="#{funcionarioBean.editFunc(func.id_funcionario)}" update=":formEdit" onclick="PF('edit').show();"/>
+                           
+                        </p:column>
+
+                    <f:facet name="paginatorTopLeft">
+                        <p:commandButton type="button" icon="pi pi-refresh" />
+                    </f:facet>
+
+                    <f:facet name="paginatorBottomRight">
+                        <p:commandButton type="button" icon="pi pi-cloud-upload" />
+                    </f:facet>
+
+                </p:dataTable>
+                    <p:dialog header="Cadastrar funcionario" widgetVar="cadastrar" modal="true" >
+                <h:form id="formCad">
+                    <p:messages id="msgs" />
+                    <div class="row justify-content-center m-5">
+                    <h:panelGrid columns="4" cellpadding="5">
+
+
+
+                        <p:outputLabel for="nome" value="Nome completo:" />
+                        <p:inputText id="nome" value="#{funcionarioBean.funcionario.nome}" />
+
+                        <p:outputLabel for="cpf" value="CPF: " />
+                        <p:inputText id="cpf" value="#{funcionarioBean.funcionario.cpf}" />
+
+                        <p:outputLabel for="email" value="email: " />
+                        <p:inputText id="email" value="#{funcionarioBean.funcionario.email}" />
+
+                        <p:outputLabel for="celular" value="Celular: " />
+                        <p:inputText id="celular" value="#{funcionarioBean.funcionario.celular}" />
+
+                        <p:outputLabel for="usuario" value="Usuario: " />
+                        <p:inputText  id="usuario" value="#{funcionarioBean.user.nome_usuario}" />
+
+                        <p:outputLabel for="senha" value="Senha: " />
+                        <p:inputText type="password" id="senha" value="#{funcionarioBean.user.senha}" />
+
+                        <p:outputLabel for="depto" value="Departamento pertencente: " />
+                        <p:selectOneMenu id="depto" value="#{funcionarioBean.funcionario.depto}" converter="departamentoConverter" style="width:210px" filter="true" filterMatchMode="startsWith">
+                            
+                            <f:selectItems value="#{departamentoBean.allListDepto}" var="dp" itemLabel="#{dp.nome}" itemValue="#{dp}" />
+
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                    </div>
+                    <div class="row justify-content-center p-3">
+                        <p:commandButton value="Salvar" action="#{funcionarioBean.salvaFuncionarioUsuario}" class="btn btn-outline-success" update=":dataTable" />
+                    </div>
+                </h:form>
+            </p:dialog>
+                
+            
+            
+            </h:form>
+            
+            
+            
+        </div>
+       <p:dialog header="Editar funcionario" widgetVar="edit" modal="true" >
+                <h:form id="formEdit">
+                    <p:messages id="msgs" />
+                    <div class="row justify-content-center m-5">
+                    <h:panelGrid columns="4" cellpadding="5">
+
+
+
+                        <p:outputLabel for="nome" value="Nome completo:" />
+                        <p:inputText id="nome" value="#{funcionarioBean.funcionario.nome}" />
+
+                        <p:outputLabel for="cpf" value="CPF: " />
+                        <p:inputText id="cpf" value="#{funcionarioBean.funcionario.cpf}" />
+
+                        <p:outputLabel for="email" value="email: " />
+                        <p:inputText id="email" value="#{funcionarioBean.funcionario.email}" />
+
+                        <p:outputLabel for="celular" value="Celular: " />
+                        <p:inputText id="celular" value="#{funcionarioBean.funcionario.celular}" />
+
+                        <p:outputLabel for="usuario" value="Usuario: " />
+                        <p:inputText  id="usuario" value="#{funcionarioBean.user.nome_usuario}" />
+
+                        <p:outputLabel for="senha" value="Senha: " />
+                        <p:inputText type="password" id="senha" value="#{funcionarioBean.user.senha}" />
+
+                        <p:outputLabel for="depto" value="Departamento pertencente: " />
+                        <p:selectOneMenu id="depto" value="#{funcionarioBean.funcionario.depto}" converter="departamentoConverter" style="width:210px" filter="true" filterMatchMode="startsWith">
+                            <f:selectItem noSelectionOption="true" itemLabel="Selecione uma departamento" />
+                            <f:selectItems value="#{departamentoBean.allListDepto}" var="dp" itemLabel="#{dp.nome}" itemValue="#{dp}" />
+
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                    </div>
+                    <div class="row justify-content-center p-3">
+                        <p:commandButton value="Salvar" action="#{funcionarioBean.atualizaFuncionario}" class="btn btn-outline-success" update="formEdit" />
+                    </div>
+                </h:form>
+            </p:dialog>
+</ui:decorate>

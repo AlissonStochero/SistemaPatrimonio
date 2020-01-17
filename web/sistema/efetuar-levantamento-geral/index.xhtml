@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:h="http://xmlns.jcp.org/jsf/html"
+             xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+             template="../../template.xhtml"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <div class="container-fluid"><h3 class="mb-5 mt-5">Efetuar levantamento geral</h3></div>
+
+
+    <div class="container-fluid justify-content-center p-3">
+
+        <h:form id="dataTable">
+            <p:growl id="growl" showDetail="true" sticky="true" />
+            <p:dataTable var="mat" value="#{materialBean.allMateriais}" rows="30"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15">
+
+                <f:facet name="header">
+                    
+                    <p:commandButton icon="ui-icon-print" action="#{levantamentoUnidadeBean.geraRel()}" ajax="false" onclick="this.form.target='_blank'" />
+                    <h:outputText value="Valor total do patrimonio: #{materialBean.retornaTotal()}"/>
+                </f:facet>
+
+                <p:column headerText="Patrimonio" sortBy="#{mat.patrimonio.cod_patrimonio}" filterBy="#{mat.patrimonio.cod_patrimonio}" style="width: 10%">
+                    <h:outputText value="#{mat.patrimonio.cod_patrimonio}" />
+                </p:column>
+
+                <p:column headerText="Material" sortBy="#{mat.nome}" filterBy="#{mat.nome}" style="width: 15%">
+                    <h:outputText value="#{mat.nome}" />
+                </p:column>
+
+                <p:column headerText="Aquisição" sortBy="#{mat.data_aquisicao}" filterBy="#{mat.data_aquisicao}" filterMatchMode="contains" style="width: 10%">
+                    <h:outputText value="#{mat.data_aquisicao}">
+                        <f:convertDateTime pattern="dd/MMyyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Vlr Compra" sortBy="#{mat.valor_compra}" filterBy="#{mat.valor_compra}" style="width: 11%">
+                    <h:outputText value="#{mat.valor_compra}" >
+                        <f:convertNumber pattern="R$ 0.00" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Vlr Atual" sortBy="#{mat.valor_atual}" filterBy="#{mat.valor_atual}" style="width: 11%">
+                    <h:outputText value="#{mat.valor_atual}" >
+                        <f:convertNumber pattern="R$ 0.00" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Unidade" sortBy="#{mat.depto.unidade.nome}" filterBy="#{mat.depto.unidade.nome}" style="width: 11%">
+                    <h:outputText value="#{mat.depto.unidade.nome}" />
+                </p:column> 
+
+                <p:column headerText="Depto" sortBy="#{mat.depto.nome}" filterBy="#{mat.depto.nome}" style="width: 11%">
+                    <h:outputText value="#{mat.depto.nome}" />
+                </p:column>    
+
+                <p:column headerText="Ações" style="width: 13%;">
+
+                    <p:commandButton icon="ui-icon-pencil" title="Editar" action="#{materialBean.editMat(mat.id_material)}" update=":formEdit" onclick="PF('edit').show();"/>
+                    <p:commandButton icon="ui-icon-arrowreturnthick-1-e" title="Transferir" action="#{transferenciaBean.pegaMaterialParaTransferencia(mat.id_material)}" update=":formTransf" onclick="PF('transf').show();"/>
+                    <p:commandButton icon="ui-icon-calendar" title="Historico material" action="#{transferenciaBean.getHistoricoMaterialbyId(mat)}" update=":formHistory" onclick="PF('history').show();"/>
+                </p:column>
+
+                <f:facet name="paginatorTopLeft">
+                    <p:commandButton type="button" icon="pi pi-refresh" />
+                </f:facet>
+
+                <f:facet name="paginatorBottomRight">
+                    <p:commandButton type="button" icon="pi pi-cloud-upload" />
+                </f:facet>
+
+            </p:dataTable>
+            
+
+        </h:form>
+
+
+
+    </div>
+    <p:dialog header="Editar Material" widgetVar="edit" modal="true" >
+        <h:form id="formEdit">
+            <div class="row justify-content-center m-5">
+                <h:panelGrid columns="4" cellpadding="5">
+
+
+
+                    <p:outputLabel for="material" value="Material: " />
+                    <p:inputText id="material" value="#{materialBean.material.nome}" />
+
+                    <p:outputLabel for="data_aq" value="Data de aquisição: " />
+                    <p:inputText id="data_aq" type="date" value="#{materialBean.material.data_aquisicao}" readonly="true"/>
+
+                    <p:outputLabel for="vlrCompra" value="Valor de compra: " />
+                    <p:outputLabel id="vlrCompra" value="#{materialBean.material.valor_compra}" />
+
+                    <p:outputLabel for="vlr_atual" value="Valor atual: " />
+                    <p:outputLabel id="vlr_atual" value="#{materialBean.material.valor_atual}" />
+
+                    <p:outputLabel for="codPat" value="Código de partimonio: " />
+                    <p:outputLabel id="codPat" value="#{materialBean.material.patrimonio.cod_patrimonio}" />
+
+                    <p:outputLabel for="depto" value="Departamento pertencente: " />
+                    <p:selectOneMenu id="depto" value="#{materialBean.material.depto}" converter="departamentoConverter" style="width:210px" filter="true" filterMatchMode="startsWith">
+
+                        <f:selectItems value="#{departamentoBean.allListDepto}" var="dp" itemLabel="#{dp.nome}" itemValue="#{dp}"/>
+
+                    </p:selectOneMenu>
+                </h:panelGrid>
+            </div>
+            <div class="row justify-content-center p-3">
+                <p:commandButton value="Salvar" action="#{materialBean.atualizaMaterial()}" class="btn btn-outline-success" update=":dataTable" />
+            </div>
+        </h:form>
+    </p:dialog>
+    <p:dialog header="Transferir Material" widgetVar="transf" modal="true" >
+        <h:form id="formTransf">
+            <div class="row justify-content-center m-5">
+                <h:panelGrid columns="2" cellpadding="5">
+
+                    <p:outputLabel id="material" value="Material: #{transferenciaBean.material.nome}" />
+
+
+                    <p:outputLabel id="data_aq" value="Data de aquisição: #{transferenciaBean.material.data_aquisicao}" />
+
+
+                    <p:outputLabel id="vlrCompra" value="Valor de compra: #{transferenciaBean.material.valor_compra}" />
+
+                    <p:outputLabel id="vlr_atual" value="Valor atual: #{transferenciaBean.material.valor_atual}" />
+
+
+                    <p:outputLabel id="codPat" value="Código de partimonio: #{transferenciaBean.material.patrimonio.cod_patrimonio}" />
+
+                    <div class="row">
+                        <p:outputLabel for="depto" value="Departamento pertencente: " />
+                        <p:selectOneMenu id="depto" value="#{transferenciaBean.transf.depto_origem}" converter="departamentoConverter" style="width:210px" filter="true" filterMatchMode="startsWith">
+
+                            <f:selectItems value="#{departamentoBean.allListDepto}" var="dp" itemLabel="#{dp.nome}" itemValue="#{dp}"/>
+
+                        </p:selectOneMenu>
+                        <p:outputLabel for="unidade" value="Unidade pertencente: " />
+                        <p:selectOneMenu id="unidade" value="#{departamentoBean.depto.unidade}" converter="unidadeConverter" style="width:160px" filter="true" filterMatchMode="startsWith">
+                            <f:selectItem noSelectionOption="true" itemLabel="Selecione uma unidade" />
+                            <f:selectItems value="#{unidadeBean.allListUnidade}" var="unidade" itemLabel="#{unidade.nome}" itemValue="#{unidade}"/>
+
+                        </p:selectOneMenu>
+                        <p:outputLabel for="depto_destino" value="Departamento destino: " />
+                        <p:selectOneMenu id="depto_destino" value="#{transferenciaBean.transf.depto_destino}" converter="departamentoConverter" style="width:210px" filter="true" filterMatchMode="startsWith">
+
+                            <f:selectItems value="#{departamentoBean.allListDepto}" var="dp" itemLabel="#{dp.unidade.nome} - #{dp.nome}" itemValue="#{dp}"/>
+
+                        </p:selectOneMenu>
+                    </div>
+                </h:panelGrid>
+            </div>
+            <div class="row justify-content-center p-3">
+                <p:commandButton value="Salvar" action="#{transferenciaBean.efetuaTransferencia}" class="btn btn-outline-success" update=":dataTable" />
+            </div>
+        </h:form>
+    </p:dialog>
+    <p:dialog header="Historico do Material" widgetVar="history" modal="true" >
+        <h:form id="formHistory">
+            <p:dataTable var="transf" value="#{transferenciaBean.list}" rows="8"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15">
+
+                <p:column headerText="Patrimonio" sortBy="#{transf[0]}" filterBy="#{transf[0]}" style="width: 131px">
+                    <h:outputText value="#{transf[0]}" />
+                </p:column>
+
+                <p:column headerText="Material" sortBy="#{transf[1]}" filterBy="#{transf[1]}" style="width: 131px">
+                    <h:outputText value="#{transf[1]}" />
+                </p:column>
+
+                <p:column headerText="Dt Tranferencia" sortBy="#{transf[2]}" filterBy="#{transf[2]}" style="width: 131px">
+                    <h:outputText value="#{transf[2]}" />
+                </p:column>
+
+                <p:column headerText="Un. Destino" sortBy="#{transf[3]}" filterBy="#{transf[3]}" style="width: 131px">
+                    <h:outputText value="#{transf[3]}" />
+                </p:column>
+
+                <p:column headerText="Depto. Destino" sortBy="#{transf[4]}" filterBy="#{transf[4]}" style="width: 131px">
+                    <h:outputText value="#{transf[4]}" />
+                </p:column>
+
+                <f:facet name="paginatorTopLeft">
+                    <p:commandButton type="button" icon="pi pi-refresh" />
+                </f:facet>
+
+                <f:facet name="paginatorBottomRight">
+                    <p:commandButton type="button" icon="pi pi-cloud-upload" />
+                </f:facet>
+
+            </p:dataTable>
+        </h:form>
+    </p:dialog>
+</ui:decorate>
+
