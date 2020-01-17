@@ -30,19 +30,19 @@ Listagem dos materiais
 
 #### Editar Material
 Tela de edição das informações referentes ao material
-![tela de edição de material](https://github.com/AlissonStochero/tcc/blob/master/imagens/editar%20material.png)
+![tela de edição de material](https://github.com/AlissonStochero/SistemaPatrimonio/blob/master/imagens/editar%20material.png)
 
 #### Histórico do Material
 Mostra um breve historio de por onde o material já foi utilizado, tendo o último local como o atual
-![tela do historico de material](https://github.com/AlissonStochero/tcc/blob/master/imagens/hitorico%20material.png)
+![tela do historico de material](https://github.com/AlissonStochero/SistemaPatrimonio/blob/master/imagens/hitorico%20material.png)
 
 #### Transferência de Material
 Nesta tela pode-se efetuar a transferencia do material para outro local na mesma unidade ou diferente
-![tela de transferência de material](https://github.com/AlissonStochero/tcc/blob/master/imagens/transferir%20material.png)
+![tela de transferência de material](https://github.com/AlissonStochero/SistemaPatrimonio/blob/master/imagens/transferir%20material.png)
 
 #### Levantamento geral dos Materiais
  Esta tela faz o levantamento geral de patrimonio com opção de gerar um relatório PDF com as informações.
-![tela de levantamento geral dos materiaais](https://github.com/AlissonStochero/tcc/blob/master/imagens/levant%20geral.png)
+![tela de levantamento geral dos materiais](https://github.com/AlissonStochero/SistemaPatrimonio/blob/master/imagens/levant%20geral.png)
 
 
 
