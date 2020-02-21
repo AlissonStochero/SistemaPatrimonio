@@ -22,11 +22,11 @@
 ## Telas mais importantes do sistema
 #### Cadastrar Material
 formulário de cadastro de materiais
-![tela de cadastro de material](https://github.com/AlissonStochero/tcc/blob/master/imagens/cadastrar%20material.png)
+![tela de cadastro de material](https://github.com/AlissonStochero/SistemaPatrimonio/blob/master/imagens/cadastrar%20material.png)
 
 #### Materiais Cadastrados
 Listagem dos materiais
-![tela de materiais cadastrados](https://github.com/AlissonStochero/tcc/blob/master/imagens/Materiais%20cadastrados.png)
+![tela de materiais cadastrados](https://github.com/AlissonStochero/SistemaPatrimonio/blob/master/imagens/Materiais%20cadastrados.png)
 
 #### Editar Material
 Tela de edição das informações referentes ao material
